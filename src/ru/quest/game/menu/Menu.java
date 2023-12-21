@@ -2,8 +2,10 @@ package ru.quest.game.menu;
 
 // Переписать заглушки на реальные методы
 
-import ru.quest.game.GamePlay;
+import ru.quest.game.quest.GamePlay;
+import ru.quest.game.quest.Quest;
 import ru.quest.game.player.Player;
+import ru.quest.game.quest.Script;
 
 import java.io.*;
 import java.util.Scanner;
@@ -11,7 +13,6 @@ import java.util.Scanner;
 public class Menu {
     GamePlay gamePlay;
     Player player;
-    //MenuHandler menuHandler;
 
     public Menu() {}
 
@@ -43,6 +44,25 @@ public class Menu {
     }
 
     public void play() throws IOException {
+        this.gamePlay = null;
+        Quest quest = new Quest();
+        Script script = new Script();
+        script.setParagraphs(script.parseScript());
+        Menu menu = new Menu();
+        MenuHandler menuHandler = new MenuHandler(
+                new PlayCommand(menu),
+                new BackCommand(menu),
+                new ExitCommand(menu),
+                new SaveCommand(menu),
+                new LoadCommand(menu));
+        GamePlay gamePlay = new GamePlay(quest, 0);
+        menu.setGamePlay(gamePlay);
+        menu.setPlayer(player);
+        quest.setScript(script);
+        quest.setMenu(menu);
+        quest.setMenuHandler(menuHandler);
+        quest.setPlayer(player);
+        quest.setGamePlay(gamePlay);
         gamePlay.gamePlay();
     }
 
@@ -55,8 +75,8 @@ public class Menu {
     }
 
     public void save(){
-        try(FileWriter writer = new FileWriter(player.getNickName() + ".txt"/*, false*/)) {
-            writer.append(String.valueOf(gamePlay.getMovePosition())); // Записываем число в файл, конвертируя число в строку https://ru.hexlet.io/qna/java/questions/kak-zapisat-chislo-v-fayl-java
+        try(FileWriter writer = new FileWriter(player.getNickName() + ".txt")) {
+            writer.append(String.valueOf(gamePlay.getMovePosition()));
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -66,28 +86,65 @@ public class Menu {
 
     public int load(){
         int a = 0;
-        try {
-            Scanner scanner = new Scanner(new File(player.getNickName() + ".txt"));
+        try (Scanner scanner = new Scanner(new File(player.getNickName() + ".txt"))){
             a = scanner.nextInt();
             gamePlay.setMovePosition(a);
         } catch (FileNotFoundException e) {
-            System.out.println("Не найдено сохранения для игроква " + player.getNickName());
+            System.out.println("Не найдено сохранения для игрока " + player.getNickName());
         }
         return gamePlay.gamePlay();
     }
 
+    public void printFirstMenuOptions(){
+        File file = new File(player.getNickName() + ".txt");
+        Quest quest = new Quest();
+        Script script = new Script();
+        try {
+            script.setParagraphs(script.parseScript());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Menu menu = new Menu();
+        MenuHandler menuHandler = new MenuHandler(
+                new PlayCommand(menu),
+                new BackCommand(menu),
+                new ExitCommand(menu),
+                new SaveCommand(menu),
+                new LoadCommand(menu));
+        menu.setPlayer(player);
+        GamePlay gamePlay = new GamePlay(quest, 0);
+        menu.setGamePlay(gamePlay);
+        menu.setPlayer(player);
+        quest.setScript(script);
+        quest.setMenu(menu);
+        quest.setMenuHandler(menuHandler);
+        quest.setPlayer(player);
+        quest.setGamePlay(gamePlay);
+        System.out.println("/play — Начать игру");
+        if (file.exists()) {
+            System.out.println("/load — Загрузить игру");
+        }
+        System.out.println("/exit — Выйти из игры");
+        try {
+            gamePlay.getQuest().selectMenuCommand();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public void printMenuOptions(){
         File file = new File(player.getNickName() + ".txt");
         System.out.println("/play — Начать игру");
-        // Дописать условие вывода (должно отображаться только после запуска игры)
         System.out.println("/back — Вернуться к игре");
-        System.out.println("/exit — Выйти из игры");
         System.out.println("/save — Сохранить игру");
         if (file.exists()) {
             System.out.println("/load — Загрузить игру");
         }
+        System.out.println("/exit — Выйти из игры");
+        try {
+            gamePlay.getQuest().selectMenuCommand();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
-
-
 }

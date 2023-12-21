@@ -1,4 +1,4 @@
-package ru.quest.game;
+package ru.quest.game.quest;
 
 public class Paragraph {
     private String paragraphName;

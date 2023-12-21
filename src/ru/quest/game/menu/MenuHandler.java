@@ -1,8 +1,5 @@
 package ru.quest.game.menu;
 
-import ru.quest.game.menu.Command;
-import ru.quest.game.GamePlay;
-
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -45,19 +42,5 @@ public class MenuHandler {
         load.execute();
     }
 
-    public void selectMenuCommand() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.next();
-        switch (input.toLowerCase()) {
-            case "/play" -> playGame();
-            case "/back" -> backToGame();
-            case "/exit" -> exitGame();
-            case "/save" -> saveGame();
-            case "/load" -> loadGame();
-            default -> {
-                System.out.println("Команда отсутствует. Повторите ввод:");
-                scanner.next();
-            }
-        }
-    }
+
 }

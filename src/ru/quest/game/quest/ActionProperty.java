@@ -1,4 +1,4 @@
-package ru.quest.game;
+package ru.quest.game.quest;
 
 public record ActionProperty (int actionId, int firstActionId, int secondActionId) {
 

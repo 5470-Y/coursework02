@@ -1,6 +1,4 @@
-package ru.quest.game;
-
-import ru.quest.game.menu.Menu;
+package ru.quest.game.quest;
 
 import java.io.*;
 import java.util.*;
@@ -9,17 +7,8 @@ public class Script {
     private int paragraphCount;
     private final File scriptPath = new File("src/ru/quest/game/script.txt");
     private Paragraph[] paragraphs;
-    private Menu menu;
 
     public Script(){}
-
-    public Menu getMenu() {
-        return menu;
-    }
-
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
 
     public Script(Paragraph[] paragraphs) {
         this.paragraphs = paragraphs;
